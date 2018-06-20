@@ -201,11 +201,11 @@ window.Game = (function() {
    * @param {number} timeframe
    */
   ObjectsBehaviour[ObjectType.FIREBALL] = function(object, _state, timeframe) {
-    if (object.direction && Direction.LEFT) {
+    if (object.direction & Direction.LEFT) {
       object.x -= object.speed * timeframe;
     }
 
-    if (object.direction && Direction.RIGHT) {
+    if (object.direction & Direction.RIGHT) {
       object.x += object.speed * timeframe;
     }
 
@@ -288,7 +288,7 @@ window.Game = (function() {
     return state;
   };
 
-  /*
+  /**
    * Конструктор объекта Game. Создает canvas, добавляет обработчики событий
    * и показывает приветственный экран.
    * @param {Element} container
@@ -596,11 +596,11 @@ window.Game = (function() {
         this.state.objects.push({
           direction: me.direction,
           height: window.GameConstants.Fireball.size,
-          speed: window.GameConstants.Fireball.speed(!!(me.direction && Direction.LEFT)),
+          speed: window.GameConstants.Fireball.speed(!!(me.direction & Direction.LEFT)),
           sprite: SpriteMap[ObjectType.FIREBALL],
           type: ObjectType.FIREBALL,
           width: window.GameConstants.Fireball.size,
-          x: me.direction && Direction.RIGHT ? me.x + me.width : me.x - window.GameConstants.Fireball.size,
+          x: me.direction & Direction.RIGHT ? me.x + me.width : me.x - window.GameConstants.Fireball.size,
           y: me.y + me.height / 2
         });
 
