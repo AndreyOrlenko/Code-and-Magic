@@ -12,6 +12,7 @@ function getStep(array, maxValue) {
   return step;
 }
 
+
 function getRandomNumber() {
   var num = Math.random();
   if (num < 0.1) {
