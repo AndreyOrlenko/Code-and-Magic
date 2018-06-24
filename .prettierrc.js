@@ -1,7 +1,7 @@
 module.exports = {
   printWidth: 120,
-  parser: "flow",
+  parser: 'flow',
   semi: true,
   singleQuote: true,
-  trailingComma: "none"
+  trailingComma: 'none'
 };

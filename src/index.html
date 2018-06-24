@@ -63,12 +63,13 @@
   <div class="demo"></div>
 
   <div class="setup-open">
-    <img src="./img/user-1.jpg" class="setup-open-icon">
+    <img src="./img/user-1.jpg" class="setup-open-icon" tabindex="0">
   </div>
 </header>
 
 <div class="overlay setup hidden">
-  <form class="setup-wizard-form"
+  <form action="#"
+        class="setup-wizard-form"
         method="post"
         enctype="multipart/form-data"
         autocomplete="off">
@@ -80,19 +81,18 @@
           <input type="file" name="avatar">
         </div>
         <label>
-          <input type="text" name="username"
+          <input type="text" name="username" minlength="2"
                  maxlength="25" required
-                 class="setup-user-name" value="Синий Пендальф"/>
+                 class="setup-user-name" value="Синий Пендальф">
         </label>
       </div>
 
-      <span class="setup-close">&times;</span>
+      <span class="setup-close" tabindex="0">&times;</span>
     </div>
 
 
     <div class="setup-artifacts-shop">
-      <div class="setup-artifacts-cell">
-        <img src="img/icon-star.png" alt="Star" width="65" height="50" draggable="true">
+      <div class="setup-artifacts-cell"><img src="img/icon-star.png" alt="Star" width="65" height="50" draggable="true">
       </div>
       <div class="setup-artifacts-cell"></div>
       <div class="setup-artifacts-cell"></div>
@@ -156,7 +156,7 @@
         <div class="setup-similar-list"><!--Список похожих персонажей--></div>
       </div>
 
-      <button class="button setup-submit">Сохранить</button>
+      <button class="button setup-submit" type="submit">Сохранить</button>
     </div>
   </form>
 </div>
@@ -184,7 +184,7 @@
 <script>
   'use strict';
   var fireballSize = 22;
-  var getFireballSpeed = function(left) {
+  var getFireballSpeed = function (left) {
     if (left) {
       return 5;
     } else {
@@ -193,14 +193,14 @@
   };
   var wizardSpeed = 3;
   var wizardWidth = 70;
-  var getWizardHeight = function() {
+  var getWizardHeight = function () {
     return wizardWidth * 1.337;
   };
-  var getWizardX = function(width) {
+  var getWizardX = function (width) {
     var positionWizard = width / 2 - wizardWidth / 2;
     return positionWizard;
   };
-  var getWizardY = function(height) {
+  var getWizardY = function (height) {
     return (height * 2) / 3;
   };
 </script>
