@@ -10,7 +10,6 @@
     .querySelector('#similar-wizard-template')
     .content.querySelector('.setup-similar-item');
 
-
   window.paramWizards = {
     namesWizards: ['Иван', 'Хуан Себастьян', 'Мария', 'Кристоф', 'Виктор', 'Юлия', 'Люпита', 'Вашингтон'],
     surnamesWizards: ['да Марья', 'Верон', 'Мирабелла', 'Вальц', 'Онопко', 'Топольницкая', 'Нионго', 'Ирвинг'],
@@ -31,35 +30,17 @@
     return Math.round(randomNumber);
   };
 
-
   window.calculating.getRandomArrayElement = function (arr) {
     return arr[window.calculating.getRandomArrayElemIndex(arr)];
   };
 
-  window.wizards = [
-    {
-      name: RandomSequenceConcatNameAndSurname(window.paramWizards.namesWizards, window.paramWizards.surnamesWizards),
-      coatColor: window.calculating.getRandomArrayElement(window.paramWizards.coatColors),
-      eyesColor: window.calculating.getRandomArrayElement(window.paramWizards.eyesColors)
-    },
-    {
-      name: RandomSequenceConcatNameAndSurname(window.paramWizards.namesWizards, window.paramWizards.surnamesWizards),
-      coatColor: window.calculating.getRandomArrayElement(window.paramWizards.coatColors),
-      eyesColor: window.calculating.getRandomArrayElement(window.paramWizards.eyesColors)
-    },
-    {
-      name: concatRandomNameAndSurname(window.paramWizards.namesWizards, window.paramWizards.surnamesWizards),
-      coatColor: window.calculating.getRandomArrayElement(window.paramWizards.coatColors),
-      eyesColor: window.calculating.getRandomArrayElement(window.paramWizards.eyesColors)
-    },
-    {
-      name: concatRandomNameAndSurname(window.paramWizards.namesWizards, window.paramWizards.surnamesWizards),
-      coatColor: window.calculating.getRandomArrayElement(window.paramWizards.coatColors),
-      eyesColor: window.calculating.getRandomArrayElement(window.paramWizards.eyesColors)
-    }
-  ];
+  window.paramPlayerWizard = {
+    coatColor: 'rgb(101, 137, 164)',
+    eyesColor: 'black',
+    fireballColor: '#ee4830'
+  };
 
-  var renderWizard = function (wizard) {
+  window.renderWizard = function (wizard) {
     var wizardElement = similarWizardTemplate.cloneNode(true);
     wizardElement.querySelector('.setup-similar-label').textContent = wizard.name;
     wizardElement.querySelector('.wizard-coat').style.fill = wizard.colorCoat;
@@ -67,48 +48,56 @@
     return wizardElement;
   };
 
-
-  function concatRandomNameAndSurname(arrNames, arrSurnames) {
-    return (
-      window.calculating.getRandomArrayElement(arrNames) + ' ' + window.calculating.getRandomArrayElement(arrSurnames)
-    );
-  }
-
-
-  function RandomSequenceConcatNameAndSurname(arrNames, arrSurnames) {
-    var arrayElements = [
-      window.calculating.getRandomArrayElement(arrNames),
-      window.calculating.getRandomArrayElement(arrSurnames)
-    ];
-    var randomElementOne = arrayElements[window.calculating.getRandomArrayElemIndex(arrayElements)];
-    var randomElementTwo = arrayElements[window.calculating.getRandomArrayElemIndex(arrayElements)];
-    if (randomElementOne !== randomElementTwo) {
-      return randomElementOne + ' ' + randomElementTwo;
-    } else {
-      return RandomSequenceConcatNameAndSurname(arrNames, arrSurnames);
+  window.getRange = function (wizard) {
+    var range = 0;
+    if (wizard.colorCoat === window.paramPlayerWizard.coatColor) {
+      range = range + 2;
     }
-  }
+    if (wizard.colorEyes === window.paramPlayerWizard.eyesColor) {
+      range = range + 1;
+    }
+    return range;
+  };
 
+  window.sortingWizards = function (arrElements) {
+    return arrElements.sort(function (first, second) {
+      return window.getRange(second) - window.getRange(first);
+    });
+  };
 
-  window.backend.load(function (arrElements) {
+  window.uploadWizards = function (number) {
+    var sortingArray = window.sortingWizards(window.wizards);
+    if (setupSimilarList.children.length > 0) {
+      while (setupSimilarList.children.length) {
+        setupSimilarList.removeChild(setupSimilarList.lastChild);
+        console.log('раз');
+      }
+    }
     var fragment = document.createDocumentFragment();
-    for (var i = 0; i < 4; i++) {
-      fragment.appendChild(renderWizard(arrElements[i]));
+    for (var i = 0; i < number; i++) {
+      fragment.appendChild(window.renderWizard(sortingArray[i]));
     }
     setupSimilarList.appendChild(fragment);
     setupSimilar.classList.remove('hidden');
+
+  };
+
+  window.backend.load(function (arrElements) {
+    window.wizards = arrElements;
+    window.uploadWizards(4);
   }, window.backend.onError);
-
-
 
 
   setupForm.addEventListener('submit', function (evt) {
     evt.preventDefault();
-    window.backend.save(new FormData(setupForm), function (response) {
-      console.log(response);
-      setup.classList.add('hidden');
-    }, window.backend.onError);
-
+    window.backend.save(
+      new FormData(setupForm),
+      function (response) {
+        console.log(response);
+        setup.classList.add('hidden');
+      },
+      window.backend.onError
+    );
   });
 })();
 
@@ -165,11 +154,19 @@
   var inputWirardCoat = setup.querySelector('input[name="coat-color"]');
   var inputWirardEye = setup.querySelector('input[name="eyes-color"]');
   var inputWirardFireball = setup.querySelector('input[name="fireball-color"]');
+  var timer;
 
-  window.colorizeElement = function (element1, element2, arrayColors, callback1, callback2) {
-    var color = arrayColors[window.calculating.getRandomArrayElemIndex(arrayColors)];
-    callback2(element2, color);
-    callback1(element1, color);
+  window.colorizeElement = function (element1, element2, arrayColors, callback1, callback2, object, property) {
+    var color = window.calculating.getRandomArrayElement(arrayColors);
+    if (color !== Object.getOwnPropertyDescriptor(object, property).value) {
+      if (object) {
+        Object.defineProperty(object, property, {value: color, writable: true, configurable: true, enumerable: true});
+      }
+      callback2(element2, color);
+      callback1(element1, color);
+    } else {
+      window.colorizeElement(element1, element2, arrayColors, callback1, callback2, object, property);
+    }
   };
 
   var inputElementColor = function (element, color) {
@@ -180,24 +177,55 @@
     element.style.fill = color;
   };
 
-
   var changeElementBackground = function (element, color) {
     element.style.backgroundColor = color;
   };
 
-
   setupWizardCoat.addEventListener('click', function () {
-    window.colorizeElement(setupWizardCoat, inputWirardCoat, window.paramWizards.coatColors, fillElement, inputElementColor);
+    window.colorizeElement(
+      setupWizardCoat,
+      inputWirardCoat,
+      window.paramWizards.coatColors,
+      fillElement,
+      inputElementColor,
+      window.paramPlayerWizard,
+      'coatColor'
+    );
+    clearTimeout(timer);
+    timer = setTimeout(function () {
+      window.uploadWizards(4);
+    }, 1000);
+
   });
 
   setupWizardEye.addEventListener('click', function () {
-    window.colorizeElement(setupWizardEye, inputWirardEye, window.paramWizards.eyesColors, fillElement, inputElementColor);
+    window.colorizeElement(
+      setupWizardEye,
+      inputWirardEye,
+      window.paramWizards.eyesColors,
+      fillElement,
+      inputElementColor,
+      window.paramPlayerWizard,
+      'eyesColor'
+    );
+    clearTimeout(timer);
+    timer = setTimeout(function () {
+      window.uploadWizards(4);
+    }, 1000);
+
   });
 
   setupWizardFireball.addEventListener('click', function () {
-    window.colorizeElement(setupWizardFireball, inputWirardFireball, window.paramWizards.fireballsColors, changeElementBackground, inputElementColor);
+    window.colorizeElement(
+      setupWizardFireball,
+      inputWirardFireball,
+      window.paramWizards.fireballsColors,
+      changeElementBackground,
+      inputElementColor,
+      window.paramPlayerWizard,
+      'fireballColor'
+    );
   });
-
 })();
 
 //Перетаскивание артефактов
