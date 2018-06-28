@@ -1,34 +1,39 @@
 'use strict';
+(function () {
+  window.calculating = {
+    getStep: function (array, maxValue) {
+      var max = -1;
+      var step = 0;
+      for (var i = 0; i < array.length; i++) {
+        if (array[i] > max) {
+          max = array[i];
+        }
+      }
+      step = max / maxValue;
+      return step;
+    },
 
-function getStep(array, maxValue) {
-  var max = -1;
-  var step = 0;
-  for (var i = 0; i < array.length; i++) {
-    if (array[i] > max) {
-      max = array[i];
+    getRandomNumber: function () {
+      var num = Math.random();
+      if (num < 0.1) {
+        return window.calculating.getRandomNumber();
+      } else {
+        return num;
+      }
     }
-  }
-  step = max / maxValue;
-  return step;
-}
+  };
+})();
 
 
-function getRandomNumber() {
-  var num = Math.random();
-  if (num < 0.1) {
-    return getRandomNumber();
-  } else {
-    return num;
-  }
-}
+window.renderStatistics = function (ctx, names, times) {
 
-window.renderStatistics = function(ctx, names, times) {
-  var step = getStep(times, 150);
+  var step = window.calculating.getStep(times, 150);
   var colorText = 'rgb(0,0,0)';
   var coordinateX = 200;
   var coordinateY = 250;
   var TextCoordinateY = 270;
   var columnWidth = 40;
+
 
   ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
   ctx.beginPath();
@@ -62,8 +67,9 @@ window.renderStatistics = function(ctx, names, times) {
     } else {
       ctx.fillStyle = colorText;
       ctx.fillText(names[i], 200 + 50 * i, 270);
-      ctx.fillStyle = 'rgba(0, 0, 255, ' + getRandomNumber() + ')';
+      ctx.fillStyle = 'rgba(0, 0, 255, ' + window.calculating.getRandomNumber() + ')';
       ctx.fillRect(coordinateX + 50 * i, coordinateY, columnWidth, -times[i] / step);
     }
   }
+
 };
